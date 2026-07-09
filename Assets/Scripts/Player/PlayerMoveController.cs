@@ -8,19 +8,31 @@ public class PlayerMoveController : MonoBehaviour
     [Header("コンポーネント設定")]
     [SerializeField] private PlayerStatus _playerStatus;
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private PlayerBlinkController _dashController;
 
     private Vector3 _moveDirection;
     private Vector2 _inputValue;
     private Quaternion _targetRotate;
     private Quaternion _newRotate;
 
+    public bool IsBlinking { get; set; }
+    public Vector3 FacingDirection => _moveDirection.sqrMagnitude > 0.001f
+        ? _moveDirection.normalized
+        : transform.forward;
+
     private void OnMove(InputValue inputValue)
     {
         _inputValue = inputValue.Get<Vector2>();
     }
 
+    private void OnInteract()
+    {
+        _dashController.TryDash();
+    }
+
     private void FixedUpdate()
     {
+        if (IsBlinking) return;
         PlayerMove();
         PlayerRotation();
     }

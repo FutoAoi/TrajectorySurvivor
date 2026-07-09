@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class EnemyMoveController : MonoBehaviour
+public class EnemyMoveController : MonoBehaviour ,IPooledObject
 {
     [Header("ìÆÇ´ÉpÉ^Å[Éìê›íË")]
     [SerializeField] private EnemyMoveType _moveType;
@@ -50,4 +50,11 @@ public class EnemyMoveController : MonoBehaviour
             _rb.MoveRotation(Quaternion.RotateTowards(_rb.rotation, targetRot, _data.rotateSpeed * Time.fixedDeltaTime));
         }
     }
+
+    public void OnSpawned()
+    {
+        (_mover, _state) = EnemyMoverFactory.Create(_moveType);
+    }
+
+    public void OnDespawned() { }
 }

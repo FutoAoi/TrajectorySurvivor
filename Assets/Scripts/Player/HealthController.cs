@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class HealthController : MonoBehaviour, IDamageable
+public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
 {
     private IHealthStatus _status;
     private int _currentHealth;
@@ -54,4 +54,12 @@ public class HealthController : MonoBehaviour, IDamageable
         _currentHealth = Mathf.Min(_status.MaxHealth, _currentHealth + amount);
     }
 
+    public void OnSpawned()
+    {
+        IsDead = false;
+        IsInvincible = false;
+        _currentHealth = _status.MaxHealth; ;
+    }
+
+    public void OnDespawned() { }
 }

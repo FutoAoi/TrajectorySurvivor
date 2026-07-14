@@ -12,6 +12,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
+        if (GamePauseManager.IsPaused) return;
+
         _elapsedTime += Time.deltaTime;
         _spawnTimer += Time.deltaTime;
 

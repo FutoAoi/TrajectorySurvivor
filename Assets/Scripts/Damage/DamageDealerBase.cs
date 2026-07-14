@@ -6,6 +6,9 @@ public class DamageDealerBase : MonoBehaviour
     [SerializeField] protected Faction _ownerFaction;
     [SerializeField] protected GameObject _hitEffectPrefab;
 
+    public void SetDamage(int damage) => _damage = damage;
+    public void SetOwnerFaction(Faction faction) => _ownerFaction = faction;
+
     /// <summary>
     /// 対象にダメージを与えられるか判定する（陣営・死亡状態のチェック）
     /// </summary>

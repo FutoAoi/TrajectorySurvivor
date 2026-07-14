@@ -28,6 +28,7 @@ public class EnemyMoveController : MonoBehaviour ,IPooledObject
 
     private void FixedUpdate()
     {
+        if (GamePauseManager.IsPaused) return;
         if (_mover == null || _target == null) return;
 
         var ctx = new EnemyMoveContext

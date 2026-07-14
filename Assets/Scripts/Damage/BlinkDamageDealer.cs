@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlinkDamageDealer : DamageDealerBase
+public class BlinkDamageDealer : DamageDealerBase, IPooledObject
 {
     private readonly HashSet<IDamageable> _hitTargets = new();
     private bool _isActive;
@@ -13,6 +13,15 @@ public class BlinkDamageDealer : DamageDealerBase
     }
 
     public void Deactivate()
+    {
+        _isActive = false;
+    }
+
+    // プールから取得された瞬間は自動発動しない
+    // （PlayerBlinkControllerがDashRoutine内で明示的にActivate/Deactivateを呼ぶ運用のため）
+    public void OnSpawned() { }
+
+    public void OnDespawned()
     {
         _isActive = false;
     }

@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerBlinkController : MonoBehaviour
 {
     public int CurrentChages => _currentCharges;
+
+    public event Action OnBlinkStart;
+    public event Action OnBlinkEnd;
 
     [Header("ダッシュ設定")]
     [SerializeField] private float _dashSpeed = 20f;
@@ -32,6 +35,7 @@ public class PlayerBlinkController : MonoBehaviour
 
     private void Update()
     {
+        if (GamePauseManager.IsPaused) return;
         // チャージ回復（ダッシュ中かどうかに関係なく、最大値未満なら常に貯まる）
         if (_currentCharges < _maxCharges)
         {
@@ -56,11 +60,13 @@ public class PlayerBlinkController : MonoBehaviour
     }
 
     private IEnumerator DashRoutine()
-    {
+    { 
         _isBlinking = true;
         _moveController.IsBlinking = true;
         _health.SetInvincible(true);
         _dashDamageDealer.Activate();
+
+        OnBlinkStart?.Invoke();
 
         Vector3 dashDirection = _moveController.FacingDirection;
         float timer = 0f;
@@ -79,5 +85,7 @@ public class PlayerBlinkController : MonoBehaviour
         _health.SetInvincible(false);
         _moveController.IsBlinking = false;
         _isBlinking = false;
+
+        OnBlinkEnd?.Invoke();
     }
 }

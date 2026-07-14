@@ -32,6 +32,7 @@ public class PlayerMoveController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GamePauseManager.IsPaused) return;
         if (IsBlinking) return;
         PlayerMove();
         PlayerRotation();
@@ -43,7 +44,7 @@ public class PlayerMoveController : MonoBehaviour
     private void PlayerMove()
     {
         _moveDirection = new Vector3(_inputValue.x , 0, _inputValue.y);
-        _rb.linearVelocity = _moveDirection  * _playerStatus.PlayerSpeed;
+        _rb.linearVelocity = _moveDirection  * _playerStatus.GetFinalValue(StatType.MoveSpeed,_playerStatus.PlayerSpeed);
     }
 
 

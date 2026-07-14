@@ -1,8 +1,10 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
 {
+    [SerializeField] private Image _mainHealthBar;
     private IHealthStatus _status;
     private int _currentHealth;
 
@@ -16,6 +18,7 @@ public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
     public bool IsInvincible { get; private set; }
     public void SetInvincible(bool value) => IsInvincible = value;
 
+
     private void Awake()
     {
         if (!TryGetComponent(out _status))
@@ -25,14 +28,17 @@ public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
             return;
         }
         _currentHealth = _status.MaxHealth;
+        ChangehelthBar();
     }
 
     public void TakeDamage(DamageInfo info)
     {
         if (IsDead) return;
+        if (IsInvincible) return;
 
         int finalDamage = Mathf.Max(1, info.amount - _status.Defense);
         _currentHealth -= finalDamage;
+        ChangehelthBar();
         OnDamaged?.Invoke(info, finalDamage);
 
         if (_currentHealth <= 0)
@@ -52,6 +58,7 @@ public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
     {
         if (IsDead) return;
         _currentHealth = Mathf.Min(_status.MaxHealth, _currentHealth + amount);
+        ChangehelthBar();
     }
 
     public void OnSpawned()
@@ -59,7 +66,13 @@ public class HealthController : MonoBehaviour, IDamageable ,IPooledObject
         IsDead = false;
         IsInvincible = false;
         _currentHealth = _status.MaxHealth; ;
+        ChangehelthBar();
     }
 
     public void OnDespawned() { }
+
+    private void ChangehelthBar()
+    {
+        _mainHealthBar.fillAmount = (float)_currentHealth / _status.MaxHealth;
+    }
 }

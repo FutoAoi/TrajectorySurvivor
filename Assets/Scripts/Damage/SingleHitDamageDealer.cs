@@ -1,14 +1,28 @@
 using UnityEngine;
 
-public class SingleHitDamageDealer : DamageDealerBase
+public class SingleHitDamageDealer : DamageDealerBase, IPooledObject
 {
-    [SerializeField] private float _lifeTime = 5f; // ‰½‚É‚à“–‚½‚ç‚È‚©‚Á‚½ê‡‚ÌŽ©“®Á–Å
+    [SerializeField] private float _lifeTime = 5f;
 
     private bool _hasHit;
+    private float _timer;
 
-    private void Start()
+    public void OnSpawned()
     {
-        Destroy(gameObject, _lifeTime);
+        _hasHit = false;
+        _timer = 0f;
+    }
+
+    public void OnDespawned() { }
+
+    private void Update()
+    {
+        if (GamePauseManager.IsPaused) return;
+        _timer += Time.deltaTime;
+        if (_timer >= _lifeTime)
+        {
+            ReturnToPool();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -20,6 +34,11 @@ public class SingleHitDamageDealer : DamageDealerBase
         Vector3 hitPoint = other.ClosestPoint(transform.position);
         ApplyDamage(damageable, hitPoint);
 
-        Destroy(gameObject);
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        PoolManager.Instance.Return(gameObject);
     }
 }
